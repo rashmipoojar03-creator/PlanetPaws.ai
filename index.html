@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanetPaws.ai - Wildlife AI Conservation Monitor</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', Times, serif;
+            background: linear-gradient(135deg, #ffffff 0%, #aec2a9 50%, #ffffff 100%);
+            min-height: 100%;
+            color: #040303;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, #6b9c8e1a 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, #8a33451a 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, #323a5b1a 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 2px solid #28433b4d;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(120, 255, 214, 0.1);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(45deg, #13144d, #921a5a, #450d44);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #050424;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .workflow-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #3a584f33;
+            backdrop-filter: blur(10px);
+        }
+
+        .workflow-title {
+            font-size: 1.8rem;
+            color: #241a38;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .step-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 4px solid #4d504f;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4c675f1a, transparent);
+            transition: width 0.5s ease;
+            z-index: 0;
+        }
+
+        .step-item.active::before {
+            width: 100%;
+        }
+
+        .step-item.active {
+            border-left-color: #935d5d;
+            box-shadow: 0 0 20px rgba(255, 120, 147, 0.3);
+        }
+
+        .step-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #d39d9d, #4d5252);
+            color: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            color: #07173b;
+            font-weight: bold;
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(76, 86, 83, 0.5);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #6081770d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+        }
+
+        .upload-zone:hover {
+            border-color: #c69ed3;
+            background: rgba(120, 255, 214, 0.1);
+            box-shadow: 0 0 20px rgba(120, 255, 214, 0.2);
+        }
+
+        .upload-zone.dragover {
+            border-color: #a975ab;
+            background: rgba(255, 120, 147, 0.1);
+        }
+
+        .neon-btn {
+            background: linear-gradient(45deg, #232d2a, #054744);
+            color: #0a0a0a;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 8px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .neon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(120, 255, 214, 0.4);
+        }
+
+        .neon-btn:disabled {
+            background: rgba(120, 120, 120, 0.3);
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .neon-btn.secondary {
+            background: linear-gradient(45deg, #655155, #fed6e3);
+        }
+
+        .neon-btn.secondary:hover {
+            box-shadow: 0 10px 25px rgba(255, 120, 147, 0.4);
+        }
+
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #23256a, #839e9c, #fed6e3);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: #a574740d;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 120, 147, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            color: #030303;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(120, 147, 255, 0.3);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #17275f;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #181515;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active { background: #546963; }
+        .status-dot.warning { background: #8f8864; }
+        .status-dot.critical { background: #907378; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .results-section {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(120, 147, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .results-title {
+            font-size: 2.2rem;
+            background: linear-gradient(45deg, #2f3e77, #0e5741);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .animal-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(120, 255, 214, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #86a199, #415192, #ff7893);
+        }
+
+        .animal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(120, 255, 214, 0.2);
+            border-color: #27483e;
+        }
+
+        .animal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #7a9a90, #364140);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .animal-name {
+            font-size: 1.3rem;
+            color: #24143d;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .health-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 5px auto;
+            display: block;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .health-badge.healthy {
+            background: rgba(120, 255, 214, 0.2);
+            color: #78ffd6;
+            border: 1px solid #78ffd6;
+        }
+
+        .health-badge.warning {
+            background: rgba(255, 215, 0, 0.2);
+            color: #373008;
+            border: 1px solid #2c2708;
+        }
+
+        .health-badge.critical {
+            background: rgba(255, 120, 147, 0.2);
+            color: #ff7893;
+            border: 1px solid #ff7893;
+        }
+
+        .animal-details {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #360e0e;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(120, 255, 214, 0.6);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Advanced Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-module {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(120, 147, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .feature-module:hover {
+            border-color: #7893ff;
+            box-shadow: 0 10px 30px rgba(120, 147, 255, 0.2);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #7893ff, #78ffd6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 15px;
+        }
+
+        .feature-title {
+            font-size: 1.2rem;
+            color: #040404;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .mini-chart {
+            width: 100%;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background: linear-gradient(90deg, #78ffd6, #7893ff);
+            border-radius: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .animal-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <h1>🐾 PlanetPaws.ai</h1>
+                <p class="subtitle">Next-Generation Wildlife Conservation Intelligence</p>
+            </div>
+        </header>
+
+        <main>
+            <div class="main-grid">
+                <div class="workflow-section">
+                    <h2 class="workflow-title">🔬 AI Analysis Pipeline</h2>
+                    
+                    <div class="step-flow">
+                        <div class="step-item" id="step1">
+                            <div class="step-content">
+                                <div class="step-header">
+                                    <div class="step-number">1</div>
+                                    <div class="step-title">Data Acquisition</div>
+                                </div>
+                                <p>Deploy advanced camera traps and upload wildlife imagery for comprehensive analysis</p>
+                                
+                                <div class="upload-zone" id="uploadZone">
+                                    <div style="font-size: 2rem; margin-bottom: 10px;">📸</div>
+                                    <div>Drop images here or click to upload</div>
+                                    <div style="font-size: 0.8rem; color: #063c11; margin-top: 8px;">
+                                        Supports: JPG, PNG, WebP • Max 10MB per file
+                                    </div>
+                                </div>
+                                <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                                
+                                <div style="text-align: center; margin-top: 15px;">
+                                    <button class="neon-btn" onclick="simulateCollection()">🎯 Simulate Camera Trap</button>
+                                    <button class="neon-btn secondary" onclick="document.getElementById('fileInput').click()">📤 Upload Files</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-item" id="step2">
+                            <div class="step-content">
+                                <div class="step-header">
+                                    <div class="step-number">2</div>
+                                    <div class="step-title">Neural Processing</div>
+                                </div>
+                                <p>Advanced AI preprocessing with noise reduction and feature enhancement</p>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-track">
+                                        <div class="progress-bar" id="processingProgress"></div>
+                                    </div>
+                                    <div id="processingStatus" style="margin-top: 10px; color: #242448;">
+                                        Awaiting data input...
+                                    </div>
+                                </div>
+                                
+                                <button class="neon-btn" id="processBtn" onclick="startProcessing()" disabled>⚡ Process Data</button>
+                            </div>
+                        </div>
+
+                        <div class="step-item" id="step3">
+                            <div class="step-content">
+                                <div class="step-header">
+                                    <div class="step-number">3</div>
+                                    <div class="step-title">Species Recognition</div>
+                                </div>
+                                <p>Deep learning species identification with individual animal tracking</p>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-track">
+                                        <div class="progress-bar" id="identificationProgress"></div>
+                                    </div>
+                                    <div id="identificationStatus" style="margin-top: 10px; color: #221552;">
+                                        Waiting for processed data...
+                                    </div>
+                                </div>
+                                
+                                <button class="neon-btn" id="identifyBtn" onclick="startIdentification()" disabled>🔍 Identify Species</button>
+                            </div>
+                        </div>
+
+                        <div class="step-item" id="step4">
+                            <div class="step-content">
+                                <div class="step-header">
+                                    <div class="step-number">4</div>
+                                    <div class="step-title">Health Assessment</div>
+                                </div>
+                                <p>Comprehensive health analysis using computer vision diagnostics</p>
+                                
+                                <div class="progress-container">
+                                    <div class="progress-track">
+                                        <div class="progress-bar" id="healthProgress"></div>
+                                    </div>
+                                    <div id="healthStatus" style="margin-top: 10px; color: #252651;">
+                                        Awaiting species identification...
+                                    </div>
+                                </div>
+                                
+                                <button class="neon-btn" id="healthBtn" onclick="startHealthAnalysis()" disabled>🩺 Analyze Health</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="control-panel">
+                        <h3 class="panel-title">📊 Live Metrics</h3>
+                        
+                        <div class="metric-card">
+                            <div class="metric-value" id="totalDetected">0</div>
+                            <div class="metric-label">Animals Detected</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-value" id="healthyPercent">0%</div>
+                            <div class="metric-label">Healthy Population</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-value" id="threatLevel">LOW</div>
+                            <div class="metric-label">Threat Level</div>
+                        </div>
+                        
+                        <div class="status-grid">
+                            <div style="text-align: center;">
+                                <div class="status-dot active"></div>
+                                <div style="font-size: 0.7rem; margin-top: 5px; color: #10392d;">Healthy</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="status-dot warning"></div>
+                                <div style="font-size: 0.7rem; margin-top: 5px; color: #423a0d;">Monitor</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="status-dot critical"></div>
+                                <div style="font-size: 0.7rem; margin-top: 5px; color: #5c2530;">Critical</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-panel">
+                        <h3 class="panel-title">🌍 Conservation Hub</h3>
+                        
+                        <button class="neon-btn" style="width: 100%; margin: 5px 0;" onclick="generateThreatAlert()">
+                            🚨 Threat Scan
+                        </button>
+                        
+                        <button class="neon-btn secondary" style="width: 100%; margin: 5px 0;" onclick="updateEnvironment()">
+                            🌡️ Environment Check
+                        </button>
+                        
+                        <button class="neon-btn" style="width: 100%; margin: 5px 0;" onclick="trackMigration()">
+                            🗺️ Migration Track
+                        </button>
+                        
+                        <button class="neon-btn secondary" style="width: 100%; margin: 5px 0;" onclick="analyzeBehavior()">
+                            🧠 Behavior Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="features-grid">
+                <div class="feature-module">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-title">Global Network</div>
+                    <div class="mini-chart">
+                        <div class="chart-line"></div>
+                    </div>
+                    <p style="color: #3b1111; font-size: 0.9rem; text-align: center;">
+                        Connected to 247 conservation sites worldwide
+                    </p>
+                </div>
+
+                <div class="feature-module">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI Predictions</div>
+                    <div class="mini-chart">
+                        <div class="chart-line" style="background: linear-gradient(90deg, #ff7893, #502f3a);"></div>
+                    </div>
+                    <p style="color: #4b1444; font-size: 0.9rem; text-align: center;">
+                        98.7% accuracy in species identification
+                    </p>
+                </div>
+
+                <div class="feature-module">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Real-time Alerts</div>
+                    <div class="mini-chart">
+                        <div class="chart-line" style="background: linear-gradient(90deg, #7893ff, #a8edea);"></div>
+                    </div>
+                    <p style="color: #541e42; font-size: 0.9rem; text-align: center;">
+                        Instant notifications for critical events
+                    </p>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section hidden">
+                <div class="results-header">
+                    <h2 class="results-title">🦋 Conservation Analysis Results</h2>
+                    <p style="color: #582e47;">Advanced AI-powered wildlife health and behavior assessment</p>
+                </div>
+                
+                <div class="animal-grid" id="animalGrid"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let collectedImages = [];
+        let processedData = [];
+        let identifiedAnimals = [];
+        let healthResults = [];
+
+        // Wildlife database
+        const wildlifeDatabase = [
+            { species: 'Wolf', emoji: '🐺', threats: ['climate change', 'habitat loss'], healthIssues: ['malnutrition', 'frostbite'] },
+            { species: 'Leopard', emoji: '🐆', threats: ['poaching', 'territory loss'], healthIssues: ['respiratory issues', 'injuries'] },
+            { species: 'Anaconda', emoji: '🐍', threats: ['ice melting', 'food scarcity'], healthIssues: ['malnutrition', 'drowning risk'] },
+            { species: 'Lion', emoji: '🦁', threats: ['climate change', 'overfishing'], healthIssues: ['hypothermia', 'starvation'] },
+            { species: 'Gorilla', emoji: '🦍', threats: ['deforestation', 'disease'], healthIssues: ['respiratory infections', 'injuries'] },
+            { species: 'Tiger', emoji: '🐅', threats: ['poaching', 'habitat fragmentation'], healthIssues: ['parasites', 'wounds'] }
+        ];
+
+        // Initialize particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // File handling
+        document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+        const uploadZone = document.getElementById('uploadZone');
+        uploadZone.addEventListener('click', () => document.getElementById('fileInput').click());
+        uploadZone.addEventListener('dragover', handleDragOver);
+        uploadZone.addEventListener('drop', handleDrop);
+
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            processFiles(files);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            uploadZone.classList.add('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = Array.from(event.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function processFiles(files) {
+            collectedImages = files.filter(file => file.type.startsWith('image/'));
+            updateUploadStatus();
+            enableNextStep('processBtn');
+        }
+
+        function simulateCollection() {
+            const count = Math.floor(Math.random() * 6) + 4;
+            collectedImages = [];
+            
+            for (let i = 0; i < count; i++) {
+                const animal = wildlifeDatabase[Math.floor(Math.random() * wildlifeDatabase.length)];
+                collectedImages.push({
+                    name: `thermal_scan_${i + 1}.jpg`,
+                    simulated: true,
+                    animal: animal
+                });
+            }
+            
+            updateUploadStatus();
+            enableNextStep('processBtn');
+        }
+
+        function updateUploadStatus() {
+            const uploadZone = document.getElementById('uploadZone');
+            uploadZone.innerHTML = `
+                <div style="font-size: 2rem; margin-bottom: 10px;">✅</div>
+                <div style="color: #78ffd6; font-weight: bold;">${collectedImages.length} Images Acquired</div>
+                <div style="font-size: 0.8rem; color: #a0a0a0; margin-top: 8px;">
+                    Ready for neural processing
+                </div>
+            `;
+            document.getElementById('step1').classList.add('active');
+            updateMetrics();
+        }
+
+        function enableNextStep(buttonId) {
+            document.getElementById(buttonId).disabled = false;
+        }
+
+        function startProcessing() {
+            document.getElementById('step2').classList.add('active');
+            const progressBar = document.getElementById('processingProgress');
+            const statusDiv = document.getElementById('processingStatus');
+            
+            statusDiv.textContent = 'Neural networks processing imagery...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    statusDiv.innerHTML = '<span style="color: #78ffd6;">✅ Processing complete - Enhanced imagery ready</span>';
+                    processedData = collectedImages.map(img => ({
+                        ...img,
+                        processed: true,
+                        quality: Math.random() > 0.15 ? 'high' : 'medium',
+                        enhancement: Math.random() * 0.4 + 0.6
+                    }));
+                    enableNextStep('identifyBtn');
+                }
+                progressBar.style.width = progress + '%';
+            }, 200);
+        }
+
+        function startIdentification() {
+            document.getElementById('step3').classList.add('active');
+            const progressBar = document.getElementById('identificationProgress');
+            const statusDiv = document.getElementById('identificationStatus');
+            
+            statusDiv.textContent = 'Deep learning species recognition active...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 12 + 3;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    identifiedAnimals = processedData.map((img, index) => {
+                        const animal = img.simulated ? img.animal : wildlifeDatabase[Math.floor(Math.random() * wildlifeDatabase.length)];
+                        return {
+                            id: `specimen_${index + 1}`,
+                            species: animal.species,
+                            emoji: animal.emoji,
+                            confidence: (Math.random() * 0.25 + 0.75).toFixed(3),
+                            coordinates: `${(Math.random() * 180 - 90).toFixed(6)}°, ${(Math.random() * 360 - 180).toFixed(6)}°`,
+                            timestamp: new Date().toLocaleString(),
+                            threats: animal.threats,
+                            healthIssues: animal.healthIssues,
+                            biometrics: {
+                                weight: Math.floor(Math.random() * 200 + 50) + 'kg',
+                                age: Math.floor(Math.random() * 15 + 2) + ' years',
+                                heartRate: Math.floor(Math.random() * 40 + 60) + ' bpm'
+                            }
+                        };
+                    });
+                    
+                    statusDiv.innerHTML = `<span style="color: #78ffd6;">✅ ${identifiedAnimals.length} species identified with high confidence</span>`;
+                    enableNextStep('healthBtn');
+                    updateMetrics();
+                }
+                progressBar.style.width = progress + '%';
+            }, 300);
+        }
+
+        function startHealthAnalysis() {
+            document.getElementById('step4').classList.add('active');
+            const progressBar = document.getElementById('healthProgress');
+            const statusDiv = document.getElementById('healthStatus');
+            
+            statusDiv.textContent = 'Advanced health diagnostics in progress...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10 + 2;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    healthResults = identifiedAnimals.map(animal => {
+                        const healthRoll = Math.random();
+                        let status, issues = [], severity = 0;
+                        
+                        if (healthRoll > 0.65) {
+                            status = 'healthy';
+                            severity = Math.random() * 0.2;
+                        } else if (healthRoll > 0.35) {
+                            status = 'warning';
+                            issues = [animal.healthIssues[Math.floor(Math.random() * animal.healthIssues.length)]];
+                            severity = Math.random() * 0.4 + 0.3;
+                        } else {
+                            status = 'critical';
+                            issues = animal.healthIssues.slice(0, Math.floor(Math.random() * 2) + 1);
+                            severity = Math.random() * 0.3 + 0.7;
+                        }
+                        
+                        return {
+                            ...animal,
+                            healthStatus: status,
+                            healthIssues: issues,
+                            severity: severity,
+                            recommendations: generateAdvancedRecommendations(status, issues),
+                            riskScore: Math.floor(severity * 100)
+                        };
+                    });
+                    
+                    statusDiv.innerHTML = '<span style="color: #78ffd6;">✅ Comprehensive health analysis complete</span>';
+                    displayResults();
+                    updateMetrics();
+                }
+                progressBar.style.width = progress + '%';
+            }, 400);
+        }
+
+        function generateAdvancedRecommendations(status, issues) {
+            const recommendations = {
+                healthy: ['Continue routine monitoring', 'Maintain habitat protection protocols', 'Schedule quarterly health checks'],
+                warning: ['Increase monitoring frequency to weekly', 'Veterinary consultation within 48 hours', 'Implement targeted intervention protocols'],
+                critical: ['Immediate veterinary intervention required', 'Quarantine protocols if infectious', 'Emergency response team deployment', '24/7 monitoring activation']
+            };
+            return recommendations[status] || [];
+        }
+
+        function displayResults() {
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.add('fade-in');
+            
+            const animalGrid = document.getElementById('animalGrid');
+            animalGrid.innerHTML = '';
+            
+            healthResults.forEach(animal => {
+                const animalCard = document.createElement('div');
+                animalCard.className = 'animal-card fade-in';
+                
+                animalCard.innerHTML = `
+                    <div class="animal-avatar">${animal.emoji}</div>
+                    <div class="animal-name">${animal.species}</div>
+                    <div class="health-badge ${animal.healthStatus}">${animal.healthStatus.toUpperCase()}</div>
+                    
+                    <div class="animal-details">
+                        <div class="detail-row">
+                            <span>Confidence:</span>
+                            <span style="color: #78ffd6;">${(animal.confidence * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Risk Score:</span>
+                            <span style="color: ${animal.riskScore > 70 ? '#ff7893' : animal.riskScore > 40 ? '#ffd700' : '#78ffd6'};">${animal.riskScore}/100</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Location:</span>
+                            <span>${animal.coordinates}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Weight:</span>
+                            <span>${animal.biometrics.weight}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Age:</span>
+                            <span>${animal.biometrics.age}</span>
+                        </div>
+                        ${animal.healthIssues.length > 0 ? `
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                <div style="color: #ff7893; font-weight: bold; margin-bottom: 8px;">Health Concerns:</div>
+                                ${animal.healthIssues.map(issue => `<div style="color: #a0a0a0; font-size: 0.8rem;">• ${issue}</div>`).join('')}
+                            </div>
+                        ` : ''}
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="color: #78ffd6; font-weight: bold; margin-bottom: 8px;">Recommendations:</div>
+                            ${animal.recommendations.slice(0, 2).map(rec => `<div style="color: #a0a0a0; font-size: 0.8rem;">• ${rec}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                animalGrid.appendChild(animalCard);
+            });
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateMetrics() {
+            if (healthResults.length > 0) {
+                const healthy = healthResults.filter(a => a.healthStatus === 'healthy').length;
+                const total = healthResults.length;
+                const healthyPercent = Math.round((healthy / total) * 100);
+                
+                document.getElementById('totalDetected').textContent = total;
+                document.getElementById('healthyPercent').textContent = healthyPercent + '%';
+                
+                const avgRisk = healthResults.reduce((sum, a) => sum + a.riskScore, 0) / total;
+                const threatLevel = avgRisk > 60 ? 'HIGH' : avgRisk > 30 ? 'MEDIUM' : 'LOW';
+                document.getElementById('threatLevel').textContent = threatLevel;
+                document.getElementById('threatLevel').style.color = 
+                    threatLevel === 'HIGH' ? '#ff7893' : 
+                    threatLevel === 'MEDIUM' ? '#ffd700' : '#78ffd6';
+            } else if (identifiedAnimals.length > 0) {
+                document.getElementById('totalDetected').textContent = identifiedAnimals.length;
+            }
+        }
+
+        // Advanced feature functions
+        function generateThreatAlert() {
+            const threats = [
+                'Poaching activity detected in sector 7',
+                'Unusual human presence near nesting grounds',
+                'Climate anomaly affecting migration routes',
+                'Illegal logging equipment spotted',
+                'Drone surveillance breach detected'
+            ];
+            
+            const threat = threats[Math.floor(Math.random() * threats.length)];
+            showNotification('🚨 THREAT ALERT: ' + threat, 'critical');
+        }
+
+        function updateEnvironment() {
+            const temp = Math.floor(Math.random() * 25 - 5);
+            const humidity = Math.floor(Math.random() * 40 + 40);
+            const conditions = ['Optimal', 'Good', 'Fair', 'Poor'];
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            
+            showNotification(`🌡️ Environment: ${temp}°C, ${humidity}% humidity, ${condition} conditions`, 'info');
+        }
+
+        function trackMigration() {
+            const routes = [
+                'Northern corridor migration active',
+                'Southern route showing delays',
+                'Eastern pathway clear for passage',
+                'Western route experiencing obstacles'
+            ];
+            
+            const route = routes[Math.floor(Math.random() * routes.length)];
+            showNotification('🗺️ Migration Update: ' + route, 'info');
+        }
+
+        function analyzeBehavior() {
+            const behaviors = [
+                'Increased feeding activity detected',
+                'Unusual social grouping patterns',
+                'Territorial behavior changes observed',
+                'Mating season behaviors initiated'
+            ];
+            
+            const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
+            showNotification('🧠 Behavior Analysis: ' + behavior, 'info');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.9);
+                color: ${type === 'critical' ? '#ff7893' : '#78ffd6'};
+                padding: 15px 20px;
+                border-radius: 10px;
+                border: 1px solid ${type === 'critical' ? '#ff7893' : '#78ffd6'};
+                z-index: 1000;
+                max-width: 300px;
+                font-size: 0.9rem;
+                backdrop-filter: blur(10px);
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-in forwards';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+
+        // Add slide animations
+        const slideStyle = document.createElement('style');
+        slideStyle.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(slideStyle);
+
+        // Initialize
+        createParticles();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9948483cb6217f17',t:'MTc2MTQ2NDE4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
